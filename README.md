@@ -1,9 +1,9 @@
 # Sign-It-Up
 
+<br>
 # Project Description:
-Developed a machine learning model to detect and recognize sign language gestures from a comprehensive dataset. Implemented computer vision techniques including hand detection and gesture recognition using Mediapipe and OpenCV. Achieved robust performance in real-time prediction of hand gestures, facilitating enhanced communication accessibility.
-
-# Features Include:
+Developed a machine learning model to detect and recognize sign language gestures from a comprehensive dataset. Implemented computer vision techniques including hand detection and gesture recognition using Mediapipe and OpenCV. Achieved robust performance in real-time prediction of hand gestures, facilitating enhanced communication accessibility. <br>
+<h3> Features includes:
 1) Sign language recognition and translation.
 2) Speech-to-text Conversion
 
