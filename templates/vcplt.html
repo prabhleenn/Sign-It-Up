@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Video Call for All</title>
+    <link rel="stylesheet" href="first.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Video Calling</h1>
+    </header>
+    <main>
+      <div id="videoContainer">
+        <video id="remoteVideo" autoplay></video>
+        <p id="caption">Caption text</p>
+      </div>
+      <div id="controlsContainer">
+        <button id="startButton" class="controlButton">Start Call</button>
+        <button id="endButton" class="controlButton">End Call</button>
+        <div id="checkboxContainer">
+          <label for="muteVideoCheckbox" class="checkboxLabel">
+            <input type="checkbox" id="muteVideoCheckbox" />
+            Mute Video
+          </label>
+          <label for="muteAudioCheckbox" class="checkboxLabel">
+            <input type="checkbox" id="muteAudioCheckbox" />
+            Mute Audio
+          </label>
+        </div>
+      </div>
+    </main>
+    <script>
+      const startButton = document.getElementById("startButton");
+      const endButton = document.getElementById("endButton");
+      const remoteVideo = document.getElementById("remoteVideo");
+      const muteVideoCheckbox = document.getElementById("muteVideoCheckbox");
+      const muteAudioCheckbox = document.getElementById("muteAudioCheckbox");
+
+      let startTime = 1;
+      let endTime = 3;
+
+      let localStream;
+      let remoteStream;
+      let localPeerConnection;
+      let remotePeerConnection;
+
+      startButton.addEventListener("click", startCall);
+      endButton.addEventListener("click", endCall);
+      muteVideoCheckbox.addEventListener("change", toggleVideoMute);
+      muteAudioCheckbox.addEventListener("change", toggleAudioMute);
+
+      if ("MediaRecorder" in window && "webkitSpeechRecognition" in window) {
+        let recognition = null;
+        let mediaRecorder = null;
+        let chunks = [];
+
+        // Set the recognition language
+        const recognitionLang = "en-US";
+
+        // Initialize the recognition and recorder
+        function initialize() {
+          recognition = new webkitSpeechRecognition();
+          recognition.lang = recognitionLang;
+          recognition.continuous = true;
+          recognition.interimResults = true;
+
+          recognition.onresult = (event) => {
+            const transcript =
+              event.results[event.results.length - 1][0].transcript;
+            console.log("Recognized speech:", transcript);
+            updateCaptions(transcript, startTime, endTime);
+            // changing the captions
+            startTime += 3;
+            endTime += 4;
+          };
+
+          recognition.onerror = (event) => {
+            console.error("Recognition error:", event.error);
+          };
+
+          const constraints = { audio: true };
+          navigator.mediaDevices
+            .getUserMedia(constraints)
+            .then((stream) => {
+              mediaRecorder = new MediaRecorder(stream);
+              mediaRecorder.addEventListener(
+                "dataavailable",
+                handleDataAvailable
+              );
+              mediaRecorder.addEventListener("stop", handleStop);
+            })
+            .catch((error) => {
+              console.error("Error accessing microphone:", error);
+            });
+        }
+
+        // Start recording
+        function startRecording() {
+          if (mediaRecorder && recognition) {
+            mediaRecorder.start();
+            recognition.start();
+            console.log("Recording started.");
+          }
+        }
+
+        // Stop recording
+        function stopRecording() {
+          if (mediaRecorder && recognition) {
+            mediaRecorder.stop();
+            recognition.stop();
+            console.log("Recording stopped.");
+          }
+        }
+
+        // Handle data available from the recorder
+        function handleDataAvailable(event) {
+          if (event.data.size > 0) {
+            chunks.push(event.data);
+          }
+        }
+
+        // Recognize speech from the audio blob
+        function recognizeSpeech(audioBlob) {
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+          audio.src = audioUrl;
+        }
+
+        // Handle stop event of the recorder
+        function handleStop(event) {
+          const audioBlob = new Blob(chunks, { type: chunks[0].type });
+          chunks = [];
+          recognizeSpeech(audioBlob);
+        }
+
+        // Initialize the recognition and recorder
+        initialize();
+      } else {
+        console.error(
+          "MediaRecorder or SpeechRecognition is not supported in this browser."
+        );
+      }
+
+      // Function to update the captions
+      function updateCaptions(captionText, startTime, endTime) {
+        const track = remoteVideo.addTextTrack("captions", "English", "en");
+        track.mode = "showing";
+
+        const cue = new VTTCue(startTime, endTime, captionText);
+        cue.line = 10;
+        cue.position = 50;
+        track.addCue(cue);
+      }
+
+      async function startCall() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: true,
+          });
+          localStream = stream;
+          createPeerConnection();
+          addLocalTracks();
+          startListening();
+
+          // starting listening
+          startRecording();
+        } catch (error) {
+          console.error("Error starting call:", error);
+        }
+      }
+
+      function endCall() {
+        localPeerConnection.close();
+        remotePeerConnection.close();
+        localStream.getTracks().forEach((track) => track.stop());
+        remoteVideo.srcObject = null;
+
+        // stop listening
+        stopRecording();
+      }
+
+      function createPeerConnection() {
+        localPeerConnection = new RTCPeerConnection();
+        remotePeerConnection = new RTCPeerConnection();
+
+        localPeerConnection.addEventListener("icecandidate", handleConnection);
+        remotePeerConnection.addEventListener("icecandidate", handleConnection);
+        remotePeerConnection.addEventListener("track", handleTrack);
+      }
+
+      function addLocalTracks() {
+        localStream
+          .getTracks()
+          .forEach((track) => localPeerConnection.addTrack(track, localStream));
+      }
+
+      function startListening() {
+        localPeerConnection
+          .createOffer()
+          .then((offer) => {
+            localPeerConnection.setLocalDescription(offer);
+            remotePeerConnection.setRemoteDescription(offer);
+            remotePeerConnection
+              .createAnswer()
+              .then((answer) => {
+                remotePeerConnection.setLocalDescription(answer);
+                localPeerConnection.setRemoteDescription(answer);
+              })
+              .catch((error) => console.error("Error creating answer:", error));
+          })
+          .catch((error) => console.error("Error creating offer:", error));
+      }
+
+      function handleConnection(event) {
+        const peerConnection = event.target;
+        const iceCandidate = event.candidate;
+        if (iceCandidate) {
+          const otherPeerConnection =
+            peerConnection === localPeerConnection
+              ? remotePeerConnection
+              : localPeerConnection;
+          otherPeerConnection
+            .addIceCandidate(iceCandidate)
+            .catch((error) =>
+              console.error("Error adding ICE candidate:", error)
+            );
+        }
+      }
+
+      function handleTrack(event) {
+        remoteVideo.srcObject = event.streams[0];
+      }
+
+      function toggleVideoMute() {
+        const tracks = localStream.getVideoTracks();
+        if (tracks.length > 0) {
+          const track = tracks[0];
+          track.enabled = !muteVideoCheckbox.checked;
+        }
+      }
+
+      function toggleAudioMute() {
+        const tracks = localStream.getAudioTracks();
+        if (tracks.length > 0) {
+          const track = tracks[0];
+          track.enabled = !muteAudioCheckbox.checked;
+        }
+      }
+    </script>
+  </body>
+</html>

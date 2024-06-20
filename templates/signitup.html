@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Video Calling Website Layout</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css')}}">
+  <script src="https://kit.fontawesome.com/efcd92596d.js" crossorigin="anonymous"></script>
+  
+</head>
+<body>
+    <header>
+        <div id="menu-bar" class="fas fa bar"></div>
+        <a href="#" class="logo"><b>SignItUp</b></a>
+    <nav class="navbar">
+        <a href="#home" class="active">Home</a>
+        <a href="#contacts">Contacts</a>
+        <a href="#about">About</a>
+        <a href="#settings">Settings</a>
+    </nav>
+    <div class="icons">
+        <i class="fas fa-search" id="search-btn"></i>
+    </div>
+    <div id = "google_translate_element"></div>
+    <script src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script>
+    function googleTranslateElementInit(){
+        new google.translate.TranslateElement(
+            {pageLanguage: "en"},
+           "google_translate_element"
+
+        );
+    }
+
+</script>
+
+    <form action="" class="search-bar-container">
+        <input type="text" class="search-bar" placeholder="Search here" />
+        <label for="search-bar" class="fas fa-search"></label>
+    </form>
+    </header>
+  <section class="home" id="home">
+    <div class="video">
+        <video src="video2.mp4" id="video-slider" loop muted autoplay></video>
+    </div> 
+    <div class="content">
+        <h2>Welcome to our video calling website!</h2>
+        <p>Explore the features and start video calling with a click of a button.</p>
+        <a href="vcplt.html" class="video-call-button">Start Video Call</a>
+    </div>
+    
+</section>
+  <section class="contacts" id="contacts">
+    <h1 class="heading">Contact Us</h1>
+    <div class="container">
+      <div class="row">
+          <div class="contact-left">
+              <p><i class="fa-solid fa-paper-plane"></i>prabhleen2901@gmail.com</p>
+              <p><i class="fa-solid fa-square-phone"></i>0123456789</p>
+              <div class="social-icons">
+                  <a href="https://www.instagram.com/prabhleen.29/"><i class="fa-brands fa-instagram"></i></a>
+                  <a href="https://www.linkedin.com/in/prabhleen-kaur-496109249/"><i class="fa-brands fa-linkedin"></i></a>
+                  <a href="https://twitter.com/prabhleenn_7"><i class="fa-brands fa-twitter"></i></a>
+                  <a href="https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox?compose=CllgCJNstzFcHFRhldhsRfhjgBsvWPGfdWjxffCHTfdvDFfJFkRNxCrBvrHTsHXvtCnRnqqMcxq"><i class="fa-solid fa-envelope"></i></a>
+              </div>
+
+          </div>
+          <div class="contact-right">
+              <form name="submit-to-google-sheet">
+                  <input type="text" name="Name" placeholder="Your Name" required>
+                  <input type="email" name="Email" placeholder="Your Email" required>
+                  <textarea name="Message" rows="6" placeholder="Your Message"></textarea>
+                  <button type="submit" class="btn btn2">Submit</button>
+              </form> 
+              <span id="msg"></span> 
+          </div>
+      </div>
+  </section>
+  <section id="settings">
+    <h2>Settings</h2>
+    <p>Customize your video calling experience with our settings options. Adjust audio and video settings, set up notifications, and personalize your preferences to suit your needs. Fine-tune your video calls to achieve the best quality and enhance your overall experience.</p>
+  </section>
+  <footer>
+    &copy; 2023 Video Calling Website. All rights reserved.
+  </footer>
+</body>
+</html>

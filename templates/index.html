@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Sign Language Web Calling</title>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-logo">Sign It Up</div>
+    <ul class="navbar-menu">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+
+  <form action="/predict_video" method="post" enctype="multipart/form-data">
+    <!-- Include video call interface here (e.g., webcam integration) -->
+    <input type="file" name="video_frames" accept="image/*" capture="user" multiple>
+    <button type="submit">Predict</button>
+  </form>
+  
+  <div class="content">
+    <section id="home" class="home-section">
+        
+      <h1 class="animated-text">Connect with Sign Language</h1>
+      <p class="quote animated-text">"Signing bridges the gap of silence and connects souls."</p>
+      <a href="videoapp.html" class="call-button">Start a Video Call</a>
+
+    </section>
+
+    
+        <section id="about" class="about-section">
+            <div class="about-content-box">
+              <div class="about-content">
+                <h2 class="animated-text">About Our Website</h2>
+                <p class="animated-text">At SignTalk, we are dedicated to providing a seamless video calling experience for sign language communication. 
+                    The website's speech recognition technology enables individuals to understand spoken language through real-time transcription, enhancing their participation in video calls.
+                    <br>The intuitive design and simple controls make the website easy to navigate, ensuring a seamless communication experience for both deaf and hearing users.
+                    Our platform connects individuals using sign language, empowering them to communicate effortlessly and inclusively.</p>
+                <p class="animated-text">Join us in fostering an inclusive world where everyone can communicate freely, irrespective of their hearing abilities.</p>
+              </div>
+            </div>
+          </section>
+          
+
+
+      <!-- Your about content goes here -->
+    </section>
+    <section id="services">
+      <h2>Services Section</h2>
+      <br> (Currently in Developement)
+      <!-- Your services content goes here -->
+    </section>
+    <section id="contact">
+      <h2>Contact Section</h2>
+      <!-- Your contact content goes here -->
+    </section>
+  </div>
+
+  <script>
+    document.querySelector('.navbar-toggle').addEventListener('click', function() {
+    document.querySelector('.navbar-menu').classList.toggle('navbar-active');
+  });
+  </script>
+</body>
+</html>
